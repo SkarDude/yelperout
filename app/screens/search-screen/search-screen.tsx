@@ -5,10 +5,11 @@ import { SearchBar } from "react-native-elements"
 import { observer } from "mobx-react-lite"
 import { Screen, Text, Wallpaper } from "../../components"
 import { color, spacing, typography } from "../../theme"
-import { useLazyQuery, useQuery, gql } from "@apollo/client"
+import { useLazyQuery, gql } from "@apollo/client"
 import MapView, { Marker } from "react-native-maps"
 import Geolocation from '@react-native-community/geolocation'
 import debounce from 'lodash.debounce'
+import ModalSelector from 'react-native-modal-selector'
 
 const FULL: ViewStyle = { flex: 1 }
 const CONTAINER: ViewStyle = {
@@ -63,8 +64,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginTop: 22
   },
+  filter: {
+    justifyContent: "center"
+  },
   formContainer: {
-    justifyContent: "space-between",
+    flexDirection: "row",
+    justifyContent: "space-between"
   },
   input: {
     borderWidth: 1,
@@ -72,9 +77,7 @@ const styles = StyleSheet.create({
     margin: 12,
   },
   location: {
-    alignItems: "flex-start",
-    flexWrap: "nowrap",
-    justifyContent: "flex-start"
+    justifyContent: "center"
   },
   map: {
     ...StyleSheet.absoluteFillObject,
@@ -111,8 +114,6 @@ const styles = StyleSheet.create({
     shadowRadius: 4
   },
   switch: {
-    alignItems: "flex-end",
-    flexWrap: "nowrap",
     justifyContent: "flex-end"
   },
   textStyle: {
@@ -124,8 +125,8 @@ const styles = StyleSheet.create({
 
 export const SearchScreen = observer(function SearchScreen() {
   const SEARCH_COORD = gql`
-    query Search ($term: String!, $latitude: Float!, $longitude: Float!) {
-        search(term: $term, latitude: $latitude, longitude: $longitude, limit: 5) {
+    query Search ($term: String!, $latitude: Float!, $longitude: Float!, $categories: String!) {
+        search(term: $term, latitude: $latitude, longitude: $longitude, categories: $categories, limit: 10) {
             business {
                 name
                 display_phone
@@ -143,8 +144,8 @@ export const SearchScreen = observer(function SearchScreen() {
   `
 
   const SEARCH_ADDR = gql`
-    query Search ($term: String!, $location: String!) {
-        search(term: $term, location: $location, limit: 5) {
+    query Search ($term: String!, $location: String!, $categories: String!) {
+        search(term: $term, location: $location, categories: $categories, limit: 10) {
             business {
                 name
                 display_phone
@@ -165,7 +166,8 @@ export const SearchScreen = observer(function SearchScreen() {
   const [values, setValues] = useState([])
   const [location, setLocation] = useState({ latitude: 33.470210, longitude: -112.179780 })
   const [address, setAddress] = useState("")
-  const [addmodal, setAddModal] = useState(false)
+  const [addModal, setAddModal] = useState(false)
+  const [category, setCategory] = useState("")
   const [sel, setSel] = useState("")
   const [des, setDesc] = useState("")
   const [vis, setVis] = useState(false)
@@ -179,26 +181,29 @@ export const SearchScreen = observer(function SearchScreen() {
     Geolocation.getCurrentPosition(info => setLocation({ latitude: info.coords.latitude, longitude: info.coords.longitude }))
   }
 
-  useEffect(() => {
-    if (!address) initLocation()
-  }, [address])
-
   const updateQuery = (input) => {
     setQuery(input)
+    console.log(category)
     if (!address) {
       // highlight-starts
-      const debouncedSave = debounce(() => searchCoord({ variables: { term: input, latitude: location.latitude, longitude: location.longitude } }), 400)
+      const debouncedSave = debounce(() => searchCoord({ variables: { term: input, latitude: location.latitude, longitude: location.longitude, categories: category, } }), 400)
       debouncedSave()
       // highlight-ends
       setValues(data && data.search.business)
     } else {
-      const debouncedSave = debounce(() => searchAddress({ variables: { term: input, location: address } }), 400)
+      const debouncedSave = debounce(() => searchAddress({ variables: { term: input, location: address, categories: category, } }), 400)
       debouncedSave()
       // highlight-ends
       setValues(dataA && dataA.search.business)
       setLocation(dataA && dataA.search.business[0].coordinates)
+      setIsEnabled(false)
     }
   }
+
+  useEffect(() => {
+    if (!address) initLocation()
+    updateQuery(query)
+  }, [address, category])
 
   const handleSelect = (item) => {
     setSel(`${item.name} \n Rating: ${item.rating}`)
@@ -210,6 +215,17 @@ export const SearchScreen = observer(function SearchScreen() {
     updateQuery(query)
     setAddModal(false)
   }
+  let index = 0
+  const categories = [
+    { key: index++, section: true, label: 'Category' },
+    { key: index++, label: '' },
+    { key: index++, label: 'restaurants' },
+    { key: index++, label: 'auto' },
+    { key: index++, label: 'hotels' },
+    { key: index++, label: 'homeservices' },
+    { key: index++, label: 'shopping' },
+    { key: index++, label: 'bars' },
+  ]
 
   return (
     <View testID="SearchScreen" style={FULL}>
@@ -265,7 +281,7 @@ export const SearchScreen = observer(function SearchScreen() {
             </MapView>
           </View>
         </Screen>
-        : <Screen style={CONTAINER} preset="scroll" backgroundColor={color.transparent}>
+        : <Screen style={CONTAINER} backgroundColor={color.transparent}>
           <FlatList
             style={{ marginTop: "10%" }}
             data={values}
@@ -278,7 +294,7 @@ export const SearchScreen = observer(function SearchScreen() {
       <Modal
         animationType="slide"
         transparent={true}
-        visible={addmodal}
+        visible={addModal}
         onRequestClose={() => {
           setAddModal(false)
         }}
@@ -307,8 +323,13 @@ export const SearchScreen = observer(function SearchScreen() {
               Set Location
           </Icon.Button>
         </View>
+        <View style={styles.filter}>
+          <ModalSelector
+            data={categories}
+            initValue={category || "Category"}
+            onChange={(option) => { setCategory(option.label) }} />
+        </View>
         <View style={styles.switch}>
-          <Text style={styles.modalHeader}>{isEnabled ? "Map" : "List"}</Text>
           <Switch
             trackColor={{ false: "#767577", true: "#81b0ff" }}
             thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
@@ -316,6 +337,7 @@ export const SearchScreen = observer(function SearchScreen() {
             onValueChange={toggleSwitch}
             value={isEnabled}
           />
+          <Text>{isEnabled ? "Map" : "List"}</Text>
         </View>
       </View>
       <SearchBar onChangeText={updateQuery} value={query} placeholder="Type Here..." lightTheme={true} round={true}/>
