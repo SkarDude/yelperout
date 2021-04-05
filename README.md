@@ -2,17 +2,26 @@
 Yelper Out (Help Her Out) mobile app that wraps yelp in a unique way.
 
 - [yelperout](#yelperout)
+  - [Functionality](#functionality)
   - [Build for local testing](#build-for-local-testing)
   - [Issues](#issues)
   - [Enhancements](#enhancements)
   - [Screenshots](#screenshots)
 
-## Build for local testing
+## Functionality
 This is just working locally for ios right now, android to come
+
+- Search yelp api via query / key words
+- Location based on current location or enter location address
+- Filter by category to narrow results
+- Returns top 10 results click on result for description
+- Map view and list view toggle to interact with the front end
+## Build for local testing
+
 1. Set up the machine for react native development [RN Docs](https://reactnative.dev/docs/environment-setup)
 2. Clone this repository
 3. In the root of this repo, execute `yarn install`, which will install node_modules.
-4. In  `app/app.tsx` replace apiKey with your created [Yelp Fusion](https://www.yelp.com/developers/v3/manage_app) api key
+4. In  `app/app.tsx` replace `**API_KEY**` with your created [Yelp Fusion](https://www.yelp.com/developers/v3/manage_app) api key
 5. After node_modules is installed we need to link pods for ios `cd ios && pod install && cd ..`
 6. We are ready to build iOS `yarn ios`
 

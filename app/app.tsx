@@ -51,7 +51,7 @@ function App() {
     uri: 'https://api.yelp.com/v3/graphql',
     cache: new InMemoryCache(),
     headers: {
-      authorization: "Bearer UnBW29qwEvya-A2bACjZwEkFgiGXTcN3EZ5QPi5aGN_LmSAGu3euN7EdFiUE1vXjGYePUW3HahMObLsnaNaBLK6hR3SW0NylK3SJdCGBcYfKiBMoYdE3QbakKA9lYHYx",
+      authorization: "Bearer **API_KEY**",
       'Accept-Language': 'en-US',
     },
 
