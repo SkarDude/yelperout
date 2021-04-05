@@ -1,24 +1,36 @@
 # yelperout
-Yelper Out (Help Her Out) Chrome extension to randomly select a date night and more
+Yelper Out (Help Her Out) mobile app that wraps yelp in a unique way.
 
 - [yelperout](#yelperout)
   - [Build for local testing](#build-for-local-testing)
-  - [Debugging](#debugging)
+  - [Issues](#issues)
+  - [Enhancements](#enhancements)
+  - [Screenshots](#screenshots)
 
 ## Build for local testing
-1. Clone this repository
-2. In the root of this repo, execute `yarn`, which will install node_modules.
-3. In App.tsx replace apiKey with your [Yelp Fusion](https://www.yelp.com/developers/v3/manage_app) api key
-4. After node_modules is installed we need a build folder run `yarn build`
-5. Open up Google Chrome and goto `chrome://extensions`
-6. Toggle on developer mode top right corner
-7. Select Load Unpacked top left corner and import the build directory from this project
-8. Yelper Out should show up in your extensions below make sure to toggle it on and hit refresh
-9. Interact with the extension from the top right corner right now it is just boiler plate with a search button that triggers a cors error
+This is just working locally for ios right now, android to come
+1. Set up the machine for react native development [RN Docs](https://reactnative.dev/docs/environment-setup)
+2. Clone this repository
+3. In the root of this repo, execute `yarn install`, which will install node_modules.
+4. In  `app/app.tsx` replace apiKey with your created [Yelp Fusion](https://www.yelp.com/developers/v3/manage_app) api key
+5. After node_modules is installed we need to link pods for ios `cd ios && pod install && cd ..`
+6. We are ready to build iOS `yarn ios`
 
-## Debugging
+## Issues
 
-If you come across any issues interacting with the extension, in `chrome://extensions` the Yelper Out app will show an `Errors` interactive button
+- *Search results not updating*
+  - Check to make sure your api key is getting hit in [Yelp Fusion](https://www.yelp.com/developers/v3/manage_app)
+  - Implemented a debounce so there may be a slight delay on a search query, to trigger the callback maybe add a space to the input or try selecting a categegory or location again
+- *Get location error on first launch*
+  - Accept the permission and reload the app (in a prod environment I would add a permissions listener to automatically refresh on permission grant)
+- *Emptying location causes an undefined error*
+  - This seems to be a side affect of the simple debounce, just reload the app
+
+## Enhancements
+Check out our project boards and issues as I plan on leveraging Github to maintain this app and add future enhancements
+
+https://github.com/skarDude/yelperout/projects/
+
 
 ## Screenshots
 ![Simulator Screen Shot - iPhone 11 - 2021-04-05 at 00 31 20](https://user-images.githubusercontent.com/12519126/113549816-e7bd8880-95a6-11eb-8ad0-6e618ff55a7a.png)
