@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/DreamDecoder.iml" filepath="$PROJECT_DIR$/.idea/modules/DreamDecoder.iml" group="DreamDecoder" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/app.iml" group="DreamDecoder/app" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-1433292694/react-native-community_async-storage.iml" filepath="$PROJECT_DIR$/.idea/modules/-1433292694/react-native-community_async-storage.iml" group="DreamDecoder/react-native-community_async-storage" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/2021925351/react-native-community_masked-view.iml" filepath="$PROJECT_DIR$/.idea/modules/2021925351/react-native-community_masked-view.iml" group="DreamDecoder/react-native-community_masked-view" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-1201477424/react-native-gesture-handler.iml" filepath="$PROJECT_DIR$/.idea/modules/-1201477424/react-native-gesture-handler.iml" group="DreamDecoder/react-native-gesture-handler" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-1436697246/react-native-iap.iml" filepath="$PROJECT_DIR$/.idea/modules/-1436697246/react-native-iap.iml" group="DreamDecoder/react-native-iap" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-1832117320/react-native-keychain.iml" filepath="$PROJECT_DIR$/.idea/modules/-1832117320/react-native-keychain.iml" group="DreamDecoder/react-native-keychain" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/2034206463/react-native-localize.iml" filepath="$PROJECT_DIR$/.idea/modules/2034206463/react-native-localize.iml" group="DreamDecoder/react-native-localize" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/1377766713/react-native-safe-area-context.iml" filepath="$PROJECT_DIR$/.idea/modules/1377766713/react-native-safe-area-context.iml" group="DreamDecoder/react-native-safe-area-context" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/1530261649/react-native-screens.iml" filepath="$PROJECT_DIR$/.idea/modules/1530261649/react-native-screens.iml" group="DreamDecoder/react-native-screens" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-947122404/react-native-splash-screen.iml" filepath="$PROJECT_DIR$/.idea/modules/-947122404/react-native-splash-screen.iml" group="DreamDecoder/react-native-splash-screen" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/552624390/react-native-vector-icons.iml" filepath="$PROJECT_DIR$/.idea/modules/552624390/react-native-vector-icons.iml" group="DreamDecoder/react-native-vector-icons" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/762243293/realm.iml" filepath="$PROJECT_DIR$/.idea/modules/762243293/realm.iml" group="DreamDecoder/realm" />
+    </modules>
+  </component>
+</project>
