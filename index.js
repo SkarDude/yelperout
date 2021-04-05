@@ -13,7 +13,7 @@ import { AppRegistry } from "react-native"
 /**
  * This needs to match what's found in your app_delegate.m and MainActivity.java.
  */
-const APP_NAME = "DreamDecoder"
+const APP_NAME = "YelperOut"
 
 
 let RootComponent = App

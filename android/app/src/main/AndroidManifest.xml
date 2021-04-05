@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="com.dreamdecoder">
+  package="com.yelperout">
 
     <uses-permission android:name="android.permission.INTERNET" />
 

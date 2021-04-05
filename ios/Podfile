@@ -3,7 +3,7 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 
 platform :ios, '10.0'
 
-target 'DreamDecoder' do
+target 'YelperOut' do
   # React Native Maps dependencies
   # rn_maps_path = '../node_modules/react-native-maps'
   # pod 'react-native-google-maps', :path => rn_maps_path
@@ -17,7 +17,7 @@ target 'DreamDecoder' do
 
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
-  target 'DreamDecoderTests' do
+  target 'YelperOutTests' do
     inherit! :complete
     # Pods for testing
   end
@@ -32,10 +32,10 @@ target 'DreamDecoder' do
   # end
 end
 
-target 'DreamDecoder-tvOS' do
-  # Pods for DreamDecoder-tvOS
+target 'YelperOut-tvOS' do
+  # Pods for YelperOut-tvOS
 
-  target 'DreamDecoder-tvOSTests' do
+  target 'YelperOut-tvOSTests' do
     inherit! :search_paths
     # Pods for testing
   end
