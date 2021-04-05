@@ -32,10 +32,6 @@ const TAGLINE: TextStyle = {
   lineHeight: 22,
   marginBottom: spacing[4] + spacing[1],
 }
-const IGNITE: ImageStyle = {
-  marginVertical: spacing[6],
-  alignSelf: "center",
-}
 const ALEX_WRAPPER: ViewStyle = {
   flexDirection: "row",
   alignItems: "center",

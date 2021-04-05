@@ -24,22 +24,22 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>Pods-DreamDecoder-DreamDecoderTests.xcscheme</key>
+		<key>Pods-YelperOut-YelperOutTests.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>Pods-DreamDecoder-tvOS.xcscheme</key>
+		<key>Pods-YelperOut-tvOS.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>Pods-DreamDecoder-tvOSTests.xcscheme</key>
+		<key>Pods-YelperOut-tvOSTests.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>Pods-DreamDecoder.xcscheme</key>
+		<key>Pods-YelperOut.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>

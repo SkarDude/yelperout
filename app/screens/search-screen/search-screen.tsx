@@ -27,7 +27,7 @@ const BOLD: TextStyle = { fontWeight: "bold" }
 const HEADER_TITLE: TextStyle = {
   ...TEXT,
   ...BOLD,
-  color: "#BAB6C8",
+  color: "white",
   fontSize: 30,
   textAlign: "center",
   letterSpacing: 1.5,
@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     marginTop: 22
   },
   filter: {
-    justifyContent: "center"
+    justifyContent: "center",
   },
   formContainer: {
     flexDirection: "row",
@@ -325,6 +325,7 @@ export const SearchScreen = observer(function SearchScreen() {
         </View>
         <View style={styles.filter}>
           <ModalSelector
+            style={{ backgroundColor: "#F194FF", }}
             data={categories}
             initValue={category || "Category"}
             onChange={(option) => { setCategory(option.label) }} />

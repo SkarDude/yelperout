@@ -53,7 +53,7 @@ const BOWSER: ImageStyle = {
 }
 const CONTENT: TextStyle = {
   ...TEXT,
-  color: "#BAB6C8",
+  color: "white",
   fontSize: 20,
   lineHeight: 26,
   marginBottom: spacing[5],
@@ -61,7 +61,7 @@ const CONTENT: TextStyle = {
 const CONTINUE: ViewStyle = {
   paddingVertical: spacing[4],
   paddingHorizontal: spacing[4],
-  backgroundColor: color.primaryDarker,
+  backgroundColor: "#788878",
 }
 const CONTINUE_TEXT: TextStyle = {
   ...TEXT,
