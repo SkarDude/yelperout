@@ -5,9 +5,8 @@ import { useNavigation } from "@react-navigation/native"
 import { observer } from "mobx-react-lite"
 import { BulletItem, Header, Text, Screen, Wallpaper } from "../../components"
 import { color, spacing } from "../../theme"
-export const logo = require("./logo.png")
 export const heart = require("./heart.png")
-export const abrev = require("./abrev.png")
+export const logo = require("./logo.png")
 
 const FULL: ViewStyle = { flex: 1 }
 const CONTAINER: ViewStyle = {
@@ -71,7 +70,7 @@ export const AboutScreen = observer(function AboutScreen() {
   const goBack = () => navigation.goBack()
 
   const images = [
-    abrev
+    logo
   ]
 
   return (
@@ -93,19 +92,12 @@ export const AboutScreen = observer(function AboutScreen() {
           onLeftPress={goBack}
         />
         <Text style={TAGLINE} tx="aboutScreen.tagLine" />
-        <TouchableOpacity onPress={ () => Linking.openURL('mailto:info@barbiebreathitt.com?subject=MobileAppContact')}>
-          <BulletItem text="Featuring over 10,000 decoded sybmbols and more to come! Suggestions click here to contact us" />
+        <TouchableOpacity onPress={ () => Linking.openURL('mailto:alexkhough@gmail.com?subject=JobPlease')}>
+          <BulletItem text="Interested in offering me a job click here to chat" />
         </TouchableOpacity>
         <TouchableOpacity onPress={ () => setVis(true)}>
-          <BulletItem text="For abbreviations for the books of the bible seen within the definitions click here" />
+          <BulletItem text="Zoom in on my skills word blob click here" />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => Linking.openURL('https://dreamsdecoder.com/')}>
-          <BulletItem text="Check out more resources and info from Dr. Barbie Breathitt on our website https://dreamsdecoder.com/" />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => Linking.openURL('https://decodemydream.com/')}>
-          <BulletItem text="Copy your decode report and submit a dream for manual analysis https://decodemydream.com/" />
-        </TouchableOpacity>
-        <Image source={logo} style={IGNITE} />
         <TouchableOpacity onPress={() => Linking.openURL('https://alexpert.tech')}>
           <View style={ALEX_WRAPPER}>
             <Text style={VERS} text="Developed with" />

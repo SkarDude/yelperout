@@ -36,6 +36,8 @@
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>This app uses location to find nearby businesses</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>This app uses location to get your location to find nearby businesses</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>

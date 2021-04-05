@@ -86,18 +86,15 @@ export const WelcomeScreen = observer(function WelcomeScreen() {
         <Header headerTx="welcomeScreen.poweredBy" style={HEADER} titleStyle={HEADER_TITLE} />
         <Text style={TITLE_WRAPPER}>
           <Text style={TITLE} text="Welcome to " />
-          <Text style={ALMOST} text="DreamDecoder!" />
+          <Text style={ALMOST} text="YelperOut!" />
         </Text>
         <Text style={TITLE} preset="header" tx="welcomeScreen.readyForLaunch" />
         <Image source={splashLogo} style={BOWSER} />
         <Text style={CONTENT}>
-          Thank you for purchasing the app. You now have a mobile offline
-          subscription to the A-Z Dream Symbology Dictionary© and our Dream Decoder Report.
-          Decode your dreams to receive an exportable report or search our growing database.
+          Quick demo of my react native skills interacting with the yelp graphql api.
         </Text>
         <Text style={CONTENT}>
-          If you have been enjoying the app please leave a review. We will be adding more features,
-          symbols, and definitions soon!
+          If you have been enjoying the app please get back to me. We will be adding more features soon!
         </Text>
       </Screen>
       <SafeAreaView style={FOOTER}>

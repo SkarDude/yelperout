@@ -1,6 +1,6 @@
 import React from "react"
 
-import { SearchScreen, AboutScreen, WelcomeScreen, DecodeScreen } from "../screens"
+import { SearchScreen, AboutScreen, WelcomeScreen } from "../screens"
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 import { color } from "../theme"
 
@@ -33,7 +33,6 @@ export function TabNavigator() {
     <Tab.Navigator initialRouteName="home" tabBarOptions={tabBarOptions}>
       <Tab.Screen name="home" options={homeTabOptions} component={WelcomeScreen} />
       <Tab.Screen name="search" component={SearchScreen} />
-      <Tab.Screen name="decode" component={DecodeScreen} />
       <Tab.Screen name="about" component={AboutScreen} />
     </Tab.Navigator>
   )

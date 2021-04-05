@@ -1,17 +1,22 @@
 import React, { useState, useEffect } from "react"
 import Icon from 'react-native-vector-icons/FontAwesome'
-import { View, ViewStyle, TextStyle, StyleSheet, Pressable, FlatList, TouchableOpacity, Modal, Switch } from "react-native"
+import { View, ViewStyle, TextStyle, StyleSheet, TextInput, Pressable, FlatList, TouchableOpacity, Modal, Switch } from "react-native"
 import { SearchBar } from "react-native-elements"
 import { observer } from "mobx-react-lite"
 import { Screen, Text, Wallpaper } from "../../components"
 import { color, spacing, typography } from "../../theme"
 import { useLazyQuery, useQuery, gql } from "@apollo/client"
-import MapView from "react-native-maps"
+import MapView, { Marker } from "react-native-maps"
+import Geolocation from '@react-native-community/geolocation'
+import debounce from 'lodash.debounce'
 
 const FULL: ViewStyle = { flex: 1 }
 const CONTAINER: ViewStyle = {
   backgroundColor: color.transparent,
   paddingHorizontal: spacing[4],
+}
+const MAP_CONTAINER: ViewStyle = {
+  backgroundColor: color.transparent,
 }
 const TEXT: TextStyle = {
   color: color.palette.white,
@@ -52,14 +57,34 @@ const styles = StyleSheet.create({
   buttonClose: {
     backgroundColor: "#2196F3",
   },
-  buttonOpen: {
-    backgroundColor: "#F194FF",
-  },
   centeredView: {
     alignItems: "center",
     flex: 1,
     justifyContent: "center",
     marginTop: 22
+  },
+  formContainer: {
+    justifyContent: "space-between",
+  },
+  input: {
+    borderWidth: 1,
+    height: 40,
+    margin: 12,
+  },
+  location: {
+    alignItems: "flex-start",
+    flexWrap: "nowrap",
+    justifyContent: "flex-start"
+  },
+  map: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  mapCont: {
+    alignItems: 'center',
+    height: "90%",
+    justifyContent: 'center',
+    marginTop: "10%",
+    width: "100%",
   },
   modalHeader: {
     fontSize: 20,
@@ -98,9 +123,28 @@ const styles = StyleSheet.create({
 })
 
 export const SearchScreen = observer(function SearchScreen() {
-  const SEARCH = gql`
-    query Search {
-        search(term: "burrito", latitude: 33.470210, longitude: -112.179780, limit: 5) {
+  const SEARCH_COORD = gql`
+    query Search ($term: String!, $latitude: Float!, $longitude: Float!) {
+        search(term: $term, latitude: $latitude, longitude: $longitude, limit: 5) {
+            business {
+                name
+                display_phone
+                location {
+                  formatted_address
+                }
+                coordinates {
+                  latitude
+                  longitude
+                }
+                rating
+            }
+        }
+    }
+  `
+
+  const SEARCH_ADDR = gql`
+    query Search ($term: String!, $location: String!) {
+        search(term: $term, location: $location, limit: 5) {
             business {
                 name
                 display_phone
@@ -119,24 +163,41 @@ export const SearchScreen = observer(function SearchScreen() {
 
   const [query, setQuery] = useState("")
   const [values, setValues] = useState([])
+  const [location, setLocation] = useState({ latitude: 33.470210, longitude: -112.179780 })
+  const [address, setAddress] = useState("")
+  const [addmodal, setAddModal] = useState(false)
   const [sel, setSel] = useState("")
   const [des, setDesc] = useState("")
   const [vis, setVis] = useState(false)
-  const { loading, error, data } = useQuery(SEARCH)
+  const [searchCoord, { data }] = useLazyQuery(SEARCH_COORD)
+  const [searchAddress, { data: dataA }] = useLazyQuery(SEARCH_ADDR)
   const [isEnabled, setIsEnabled] = useState(false)
+
   const toggleSwitch = () => setIsEnabled(previousState => !previousState)
 
-  const initPage = async () => {
-    //
+  const initLocation = async () => {
+    Geolocation.getCurrentPosition(info => setLocation({ latitude: info.coords.latitude, longitude: info.coords.longitude }))
   }
 
   useEffect(() => {
-    if (data) setValues(data.search.business)
-  }, [data])
+    if (!address) initLocation()
+  }, [address])
 
   const updateQuery = (input) => {
     setQuery(input)
-    console.log("here")
+    if (!address) {
+      // highlight-starts
+      const debouncedSave = debounce(() => searchCoord({ variables: { term: input, latitude: location.latitude, longitude: location.longitude } }), 400)
+      debouncedSave()
+      // highlight-ends
+      setValues(data && data.search.business)
+    } else {
+      const debouncedSave = debounce(() => searchAddress({ variables: { term: input, location: address } }), 400)
+      debouncedSave()
+      // highlight-ends
+      setValues(dataA && dataA.search.business)
+      setLocation(dataA && dataA.search.business[0].coordinates)
+    }
   }
 
   const handleSelect = (item) => {
@@ -144,63 +205,118 @@ export const SearchScreen = observer(function SearchScreen() {
     setDesc(`Phone: ${item.display_phone} \n Address: ${String(item.location.formatted_address)}`)
     setVis(true)
   }
-  if (loading) console.log("loading")
-  if (error) console.log(error)
+
+  const updateLocation = () => {
+    updateQuery(query)
+    setAddModal(false)
+  }
+
   return (
     <View testID="SearchScreen" style={FULL}>
       <Wallpaper />
       <View style={HEADER}>
         {query ? <Text style={HEADER_TITLE}>{query}</Text> : <Icon name="search" size={30} color={"#BAB6C8"}/>}
       </View>
-      <Screen style={CONTAINER} preset="scroll" backgroundColor={color.transparent}>
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={vis}
-          onRequestClose={() => {
-            setVis(false)
-          }}
-        >
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <Text style={styles.modalHeader}>{sel}</Text>
-              <Text style={styles.modalText}>{des}</Text>
-              <Pressable
-                style={[styles.button, styles.buttonClose]}
-                onPress={() => setVis(false)}
-              >
-                <Text style={styles.textStyle}>Close</Text>
-              </Pressable>
-            </View>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={vis}
+        onRequestClose={() => {
+          setVis(false)
+        }}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalHeader}>{sel}</Text>
+            <Text style={styles.modalText}>{des}</Text>
+            <Pressable
+              style={[styles.button, styles.buttonClose]}
+              onPress={() => setVis(false)}
+            >
+              <Text style={styles.textStyle}>Close</Text>
+            </Pressable>
           </View>
-        </Modal>
-        {isEnabled
-          ? <MapView
-            style={{ flex: 1 }}
-            initialRegion={{
-              latitude: 33.470210,
-              longitude: -112.179780,
-              latitudeDelta: 0.05,
-              longitudeDelta: 0.05
-            }}
-          />
-          : <FlatList
+        </View>
+      </Modal>
+      {isEnabled
+        ? <Screen style={MAP_CONTAINER} backgroundColor={color.transparent}>
+          <View style={styles.mapCont}>
+            <MapView
+              style={styles.map}
+              initialRegion={{
+                ...location,
+                latitudeDelta: 0.25,
+                longitudeDelta: 0.25
+              }}
+            >
+              {!address && <Marker
+                coordinate={location}
+                title={"Your Location"}
+                pinColor={"green"}
+              />}
+              {values.map((biz, index) => (
+                <Marker
+                  key={index}
+                  coordinate={biz.coordinates}
+                  title={biz.name}
+                  onPress={ () => handleSelect(biz)}
+                />
+              ))}
+            </MapView>
+          </View>
+        </Screen>
+        : <Screen style={CONTAINER} preset="scroll" backgroundColor={color.transparent}>
+          <FlatList
             style={{ marginTop: "10%" }}
             data={values}
             keyExtractor={(i, index) => 'key' + index}
             renderItem={({ item }) => (<TouchableOpacity onPress={ () => handleSelect(item)}><Text style={FLAT_LIST}>{`${item.name}`}</Text></TouchableOpacity>)}
           />
-        }
-      </Screen>
-      <View style={styles.switch}>
-        <Text style={styles.modalHeader}>{isEnabled ? "Map" : "List"}</Text>
-        <Switch
-          trackColor={{ false: "#767577", true: "#81b0ff" }}
-          thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
-          ios_backgroundColor="#3e3e3e"
-          onValueChange={toggleSwitch}
-          value={isEnabled}
-        />
+
+        </Screen>
+      }
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={addmodal}
+        onRequestClose={() => {
+          setAddModal(false)
+        }}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalHeader}>Address</Text>
+            <Text style={styles.modalText}>Enter address or leave empty address to use current location.</Text>
+            <TextInput style={styles.input} onChangeText={setAddress}
+              value={address} placeholder="123 Rainbow Rd, Phoenix AZ 85035"/>
+            <Pressable
+              style={[styles.button, styles.buttonClose]}
+              onPress={() => updateLocation()}
+            >
+              <Text style={styles.textStyle}>Submit</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
+      <View style={styles.formContainer}>
+        <View style={styles.location}>
+          <Icon.Button
+            name="map-pin"
+            backgroundColor="#F194FF"
+            onPress={() => setAddModal(true)}>
+              Set Location
+          </Icon.Button>
+        </View>
+        <View style={styles.switch}>
+          <Text style={styles.modalHeader}>{isEnabled ? "Map" : "List"}</Text>
+          <Switch
+            trackColor={{ false: "#767577", true: "#81b0ff" }}
+            thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
+            ios_backgroundColor="#3e3e3e"
+            onValueChange={toggleSwitch}
+            value={isEnabled}
+          />
+        </View>
       </View>
       <SearchBar onChangeText={updateQuery} value={query} placeholder="Type Here..." lightTheme={true} round={true}/>
     </View>

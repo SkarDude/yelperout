@@ -5,18 +5,15 @@
     "back": "Back"
   },
   "welcomeScreen": {
-    "poweredBy": "WWWW.DREAMSDECODER.COM",
-    "readyForLaunch": "Let's start decoding",
+    "poweredBy": "WWWW.ALEXPERT.TECH",
+    "readyForLaunch": "Let's Start Demo",
     "continue": "CONTINUE"
   },
   "aboutScreen": {
     "header": "ABOUT",
-    "tagLine": "Congratulations, you’ve purchased a very advanced and portable dream decoder. Search within definitions or symbols to find something more specific. Use our decoder report to get a better understanding of the dream. Export the report and share in your dream journal."
+    "tagLine": "Thanks for checking out the app"
   },
   "searchScreen": {
     "header": "SYMBOLS"
   },
-  "decodeScreen": {
-    "header": "DECODER"
-  }
 }
