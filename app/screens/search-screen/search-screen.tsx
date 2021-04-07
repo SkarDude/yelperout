@@ -63,7 +63,7 @@ export const SearchScreen = observer(function SearchScreen() {
   const [des, setDesc] = useState("")
   const [vis, setVis] = useState(false)
   const [searchCoord, { data }] = useLazyQuery(SEARCH_COORD)
-  const [searchAddress, { data: dataA }] = useLazyQuery(SEARCH_ADDR)
+  const [searchAddress, { data: dataAddress }] = useLazyQuery(SEARCH_ADDR)
   const [isEnabled, setIsEnabled] = useState(false)
 
   const toggleSwitch = () => setIsEnabled(previousState => !previousState)
@@ -75,17 +75,14 @@ export const SearchScreen = observer(function SearchScreen() {
   const updateQuery = (input) => {
     setQuery(input)
     if (!address) {
-      // highlight-starts
       const debouncedSave = debounce(() => searchCoord({ variables: { term: input, latitude: location.latitude, longitude: location.longitude, categories: category, } }), 400)
       debouncedSave()
-      // highlight-ends
       setValues(data && data.search.business)
     } else {
       const debouncedSave = debounce(() => searchAddress({ variables: { term: input, location: address, categories: category, } }), 400)
       debouncedSave()
-      // highlight-ends
-      setValues(dataA && dataA.search.business)
-      setLocation(dataA && dataA.search.business[0].coordinates)
+      setValues(dataAddress && dataAddress.search.business)
+      setLocation(dataAddress && dataAddress.search.business[0].coordinates)
       setIsEnabled(false)
     }
   }
@@ -151,6 +148,41 @@ export const SearchScreen = observer(function SearchScreen() {
     )
   }
 
+  function FooterForm () {
+    return (
+      <View>
+        <View style={styles.formContainer}>
+          <View style={styles.location}>
+            <Icon.Button
+              name="map-pin"
+              backgroundColor="#F194FF"
+              onPress={() => setAddModal(true)}>
+              Set Location
+            </Icon.Button>
+          </View>
+          <View style={styles.filter}>
+            <ModalSelector
+              style={{ backgroundColor: "#F194FF", }}
+              data={CATEGORIES()}
+              initValue={category || "Category"}
+              onChange={(option) => { setCategory(option.label) }} />
+          </View>
+          <View style={styles.switch}>
+            <Switch
+              trackColor={{ false: "#767577", true: "#81b0ff" }}
+              thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
+              ios_backgroundColor="#3e3e3e"
+              onValueChange={toggleSwitch}
+              value={isEnabled}
+            />
+            <Text>{isEnabled ? "Map" : "List"}</Text>
+          </View>
+        </View>
+        <SearchBar onChangeText={updateQuery} value={query} placeholder="Type Here..." lightTheme={true} round={true}/>
+      </View>
+    )
+  }
+
   return (
     <View testID="SearchScreen" style={FULL}>
       <Wallpaper />
@@ -205,34 +237,7 @@ export const SearchScreen = observer(function SearchScreen() {
           </View>
         </View>
       </Modal>
-      <View style={styles.formContainer}>
-        <View style={styles.location}>
-          <Icon.Button
-            name="map-pin"
-            backgroundColor="#F194FF"
-            onPress={() => setAddModal(true)}>
-              Set Location
-          </Icon.Button>
-        </View>
-        <View style={styles.filter}>
-          <ModalSelector
-            style={{ backgroundColor: "#F194FF", }}
-            data={CATEGORIES()}
-            initValue={category || "Category"}
-            onChange={(option) => { setCategory(option.label) }} />
-        </View>
-        <View style={styles.switch}>
-          <Switch
-            trackColor={{ false: "#767577", true: "#81b0ff" }}
-            thumbColor={isEnabled ? "#f5dd4b" : "#f4f3f4"}
-            ios_backgroundColor="#3e3e3e"
-            onValueChange={toggleSwitch}
-            value={isEnabled}
-          />
-          <Text>{isEnabled ? "Map" : "List"}</Text>
-        </View>
-      </View>
-      <SearchBar onChangeText={updateQuery} value={query} placeholder="Type Here..." lightTheme={true} round={true}/>
+      <FooterForm />
     </View>
   )
 })
