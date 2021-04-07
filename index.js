@@ -15,7 +15,6 @@ import { AppRegistry } from "react-native"
  */
 const APP_NAME = "YelperOut"
 
-
-let RootComponent = App
+const RootComponent = App
 
 AppRegistry.registerComponent(APP_NAME, () => RootComponent)
