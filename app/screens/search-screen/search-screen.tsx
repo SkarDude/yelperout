@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from "react"
 import Icon from 'react-native-vector-icons/FontAwesome'
-import { View, ViewStyle, TextStyle, StyleSheet, TextInput, Pressable, FlatList, TouchableOpacity, Modal, Switch } from "react-native"
+import { View, ViewStyle, TextStyle, TextInput, Pressable, FlatList, TouchableOpacity, Modal, Switch } from "react-native"
 import { SearchBar } from "react-native-elements"
 import { observer } from "mobx-react-lite"
 import { Screen, Text, Wallpaper } from "../../components"
 import { color, spacing, typography } from "../../theme"
-import { useLazyQuery, gql } from "@apollo/client"
+import { useLazyQuery } from "@apollo/client"
 import MapView, { Marker } from "react-native-maps"
 import Geolocation from '@react-native-community/geolocation'
 import debounce from 'lodash.debounce'
 import ModalSelector from 'react-native-modal-selector'
+import { SEARCH_COORD, SEARCH_ADDR } from '../../queries/graphql'
+import CATEGORIES from '../../utils/consts'
+import { styles } from './search-styles'
 
 const FULL: ViewStyle = { flex: 1 }
 const CONTAINER: ViewStyle = {
@@ -49,119 +52,7 @@ const FLAT_LIST: TextStyle = {
   borderBottomWidth: 1,
 }
 
-const styles = StyleSheet.create({
-  button: {
-    borderRadius: 20,
-    elevation: 2,
-    padding: 10
-  },
-  buttonClose: {
-    backgroundColor: "#2196F3",
-  },
-  centeredView: {
-    alignItems: "center",
-    flex: 1,
-    justifyContent: "center",
-    marginTop: 22
-  },
-  filter: {
-    justifyContent: "center",
-  },
-  formContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between"
-  },
-  input: {
-    borderWidth: 1,
-    height: 40,
-    margin: 12,
-  },
-  location: {
-    justifyContent: "center"
-  },
-  map: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  mapCont: {
-    alignItems: 'center',
-    height: "90%",
-    justifyContent: 'center',
-    marginTop: "10%",
-    width: "100%",
-  },
-  modalHeader: {
-    fontSize: 20,
-    marginBottom: 15,
-    textAlign: "center",
-  },
-  modalText: {
-    marginBottom: 15,
-    textAlign: "center"
-  },
-  modalView: {
-    alignItems: "center",
-    backgroundColor: "white",
-    borderRadius: 20,
-    elevation: 5,
-    margin: 20,
-    padding: 35,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4
-  },
-  switch: {
-    justifyContent: "flex-end"
-  },
-  textStyle: {
-    color: "white",
-    fontWeight: "bold",
-    textAlign: "center"
-  }
-})
-
 export const SearchScreen = observer(function SearchScreen() {
-  const SEARCH_COORD = gql`
-    query Search ($term: String!, $latitude: Float!, $longitude: Float!, $categories: String!) {
-        search(term: $term, latitude: $latitude, longitude: $longitude, categories: $categories, limit: 10) {
-            business {
-                name
-                display_phone
-                location {
-                  formatted_address
-                }
-                coordinates {
-                  latitude
-                  longitude
-                }
-                rating
-            }
-        }
-    }
-  `
-
-  const SEARCH_ADDR = gql`
-    query Search ($term: String!, $location: String!, $categories: String!) {
-        search(term: $term, location: $location, categories: $categories, limit: 10) {
-            business {
-                name
-                display_phone
-                location {
-                  formatted_address
-                }
-                coordinates {
-                  latitude
-                  longitude
-                }
-                rating
-            }
-        }
-    }
-  `
-
   const [query, setQuery] = useState("")
   const [values, setValues] = useState([])
   const [location, setLocation] = useState({ latitude: 33.470210, longitude: -112.179780 })
@@ -183,7 +74,6 @@ export const SearchScreen = observer(function SearchScreen() {
 
   const updateQuery = (input) => {
     setQuery(input)
-    console.log(category)
     if (!address) {
       // highlight-starts
       const debouncedSave = debounce(() => searchCoord({ variables: { term: input, latitude: location.latitude, longitude: location.longitude, categories: category, } }), 400)
@@ -215,17 +105,51 @@ export const SearchScreen = observer(function SearchScreen() {
     updateQuery(query)
     setAddModal(false)
   }
-  let index = 0
-  const categories = [
-    { key: index++, section: true, label: 'Category' },
-    { key: index++, label: '' },
-    { key: index++, label: 'restaurants' },
-    { key: index++, label: 'auto' },
-    { key: index++, label: 'hotels' },
-    { key: index++, label: 'homeservices' },
-    { key: index++, label: 'shopping' },
-    { key: index++, label: 'bars' },
-  ]
+
+  function MapContainer () {
+    return (
+      <Screen style={MAP_CONTAINER} backgroundColor={color.transparent}>
+        <View style={styles.mapCont}>
+          <MapView
+            style={styles.map}
+            initialRegion={{
+              ...location,
+              latitudeDelta: 0.25,
+              longitudeDelta: 0.25
+            }}
+          >
+            {!address && <Marker
+              coordinate={location}
+              title={"Your Location"}
+              pinColor={"green"}
+            />}
+            {values.map((biz, index) => (
+              <Marker
+                key={index}
+                coordinate={biz.coordinates}
+                title={biz.name}
+                onPress={ () => handleSelect(biz)}
+              />
+            ))}
+          </MapView>
+        </View>
+      </Screen>
+    )
+  }
+
+  function ListContainer () {
+    return (
+      <Screen style={CONTAINER} backgroundColor={color.transparent}>
+        <FlatList
+          style={{ marginTop: "10%" }}
+          data={values}
+          keyExtractor={(i, index) => 'key' + index}
+          renderItem={({ item }) => (<TouchableOpacity onPress={ () => handleSelect(item)}><Text style={FLAT_LIST}>{`${item.name}`}</Text></TouchableOpacity>)}
+        />
+
+      </Screen>
+    )
+  }
 
   return (
     <View testID="SearchScreen" style={FULL}>
@@ -255,41 +179,8 @@ export const SearchScreen = observer(function SearchScreen() {
         </View>
       </Modal>
       {isEnabled
-        ? <Screen style={MAP_CONTAINER} backgroundColor={color.transparent}>
-          <View style={styles.mapCont}>
-            <MapView
-              style={styles.map}
-              initialRegion={{
-                ...location,
-                latitudeDelta: 0.25,
-                longitudeDelta: 0.25
-              }}
-            >
-              {!address && <Marker
-                coordinate={location}
-                title={"Your Location"}
-                pinColor={"green"}
-              />}
-              {values.map((biz, index) => (
-                <Marker
-                  key={index}
-                  coordinate={biz.coordinates}
-                  title={biz.name}
-                  onPress={ () => handleSelect(biz)}
-                />
-              ))}
-            </MapView>
-          </View>
-        </Screen>
-        : <Screen style={CONTAINER} backgroundColor={color.transparent}>
-          <FlatList
-            style={{ marginTop: "10%" }}
-            data={values}
-            keyExtractor={(i, index) => 'key' + index}
-            renderItem={({ item }) => (<TouchableOpacity onPress={ () => handleSelect(item)}><Text style={FLAT_LIST}>{`${item.name}`}</Text></TouchableOpacity>)}
-          />
-
-        </Screen>
+        ? <MapContainer />
+        : <ListContainer />
       }
       <Modal
         animationType="slide"
@@ -326,7 +217,7 @@ export const SearchScreen = observer(function SearchScreen() {
         <View style={styles.filter}>
           <ModalSelector
             style={{ backgroundColor: "#F194FF", }}
-            data={categories}
+            data={CATEGORIES()}
             initValue={category || "Category"}
             onChange={(option) => { setCategory(option.label) }} />
         </View>

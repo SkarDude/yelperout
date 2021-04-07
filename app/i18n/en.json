@@ -12,8 +12,5 @@
   "aboutScreen": {
     "header": "ABOUT",
     "tagLine": "Thanks for checking out the app"
-  },
-  "searchScreen": {
-    "header": "SYMBOLS"
-  },
+  }
 }

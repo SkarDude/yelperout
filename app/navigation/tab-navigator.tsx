@@ -7,7 +7,6 @@ import { color } from "../theme"
 export type TabParamList = {
   home: undefined
   search: undefined
-  decode: undefined
   about: undefined
 }
 
