@@ -1,5 +1,5 @@
 # yelperout
-Yelper Out (Help Her Out) mobile app that wraps yelp in a unique way.
+Yelper Out (Help Her Out) mobile app that wraps yelp in a unique way. Built in a few hours to demonstrate a few of my many react native skills.
 
 - [yelperout](#yelperout)
   - [Functionality](#functionality)
@@ -9,13 +9,13 @@ Yelper Out (Help Her Out) mobile app that wraps yelp in a unique way.
   - [Screenshots](#screenshots)
 
 ## Functionality
-This is just working locally for ios right now, android to come
 
 - Search yelp api via query / key words
 - Location based on current location or enter location address
 - Filter by category to narrow results
 - Returns top 10 results click on result for description
 - Map view and list view toggle to interact with the front end
+
 ## Build for local testing
 
 1. Set up the machine for react native development [RN Docs](https://reactnative.dev/docs/environment-setup)
